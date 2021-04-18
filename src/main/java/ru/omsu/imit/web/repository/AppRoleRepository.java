@@ -10,6 +10,6 @@ import java.util.stream.Stream;
 
 @Repository
 public interface AppRoleRepository extends JpaRepository<AppRole, Long> {
-    @Query("select roleName from AppRole where ")
-    Stream<String> findRoleNamesByUserId(@Param("userId") Long userId);
+    @Query("select user.appRoles from AppUser user where user.userId = :userId")
+    Stream<AppRole> findRoleNamesByUserId(@Param("userId") Long userId);
 }
