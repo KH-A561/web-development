@@ -14,6 +14,7 @@ import ru.omsu.imit.web.model.AppUser;
 import ru.omsu.imit.web.repository.AppRoleRepository;
 import ru.omsu.imit.web.repository.AppUserRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
         AppUser appUser = appUserRepository.findAppUserByUserName(userName);
 
@@ -43,7 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<GrantedAuthority> grantList = new ArrayList<>();
         // [ROLE_USER, ROLE_ADMIN,..]
         appRoleRepository.findRoleNamesByUserId(appUser.getUserId())
-                         .forEach(roleName -> grantList.add(new SimpleGrantedAuthority(roleName)));
+                         .forEach(appRole -> grantList.add(new SimpleGrantedAuthority(appRole.getRoleName())));
 
         return new User(appUser.getUserName(), appUser.getEncryptedPassword(), grantList);
     }
